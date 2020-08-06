@@ -206,7 +206,7 @@ class ReactKarma(commands.Cog):
         self, reaction: discord.PartialEmoji, event: discord.RawReactionActionEvent, *, added: bool
     ):
         channel = self.bot.get_channel(event.channel_id)
-        message = await channel.fetchMessage(event.message_id)
+        message = await channel.fetch_message(event.message_id)
         (author, guild) = (message.author, message.guild)
         if author.id == event.user_id:
             return
