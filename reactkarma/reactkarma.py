@@ -183,30 +183,30 @@ class ReactKarma(getattr(commands, "Cog", object)):
         await ctx.send("{}'s karma has been reset to 0.".format(user.display_name))
 
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
+    async def on_raw_reaction_add(self, event: discord.RawReactionActionEvent):
         """Fires when the bot sees a reaction being added, and updates karma.
 
         Ignores users reacting to their own message.
         """
-        await self._check_reaction(reaction, user, added=True)
+        await self._check_reaction(event.emoji, event, added=True)
 
     @commands.Cog.listener()
-    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
+    async def on_raw_reaction_remove(self, event: discord.RawReactionActionEvent):
         """Fires when the bot sees a reaction being removed, and updates karma.
 
         Ignores users reacting to their own message.
         """
-        await self._check_reaction(reaction, user, added=False)
+        await self._check_reaction(event.emoji, event, added=False)
 
     async def _check_reaction(
-        self, reaction: discord.Reaction, user: discord.User, *, added: bool
+        self, reaction: discord.PartialEmoji, event: discord.RawReactionActionEvent, *, added: bool
     ):
-        message = reaction.message
-        (author, channel, guild) = (message.author, message.channel, message.guild)
-        if author == user:
+        channel = discord.get_channel(event.channel_id)
+        message = await channel.fetchMessage(event.message_id)
+        (author, guild) = (message.author, message.guild)
+        if author.id == event.user_id:
             return
-        emoji = reaction.emoji
-        upvote = await self._is_upvote(guild, emoji)
+        upvote = await self._is_upvote(guild, reaction)
         if upvote is not None:
             await self._add_karma(author, 1 if upvote == added else -1)
 
@@ -222,7 +222,7 @@ class ReactKarma(getattr(commands, "Cog", object)):
             emoji = await self.conf.guild(guild).downvote()
         return emoji
 
-    async def _is_upvote(self, guild: discord.Guild, emoji):
+    async def _is_upvote(self, guild: discord.Guild, emoji: discord.PartialEmoji):
         """Check if the given emoji is an upvote.
 
         Returns True if the emoji is the upvote emoji, False f it is the
@@ -230,10 +230,12 @@ class ReactKarma(getattr(commands, "Cog", object)):
         """
         upvote = await self.conf.guild(guild).upvote()
         downvote = await self.conf.guild(guild).downvote()
-        if isinstance(upvote, int) and isinstance(emoji, discord.Emoji):
+
+        if isinstance(upvote, int):
             if emoji.id == upvote:
                 return True
-            if emoji == downvote:
+        if isinstance(downvote, int):
+            if emoji.id == downvote:
                 return False
         if emoji == upvote:
             return True
