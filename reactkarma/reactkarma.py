@@ -26,6 +26,7 @@ from collections import namedtuple
 
 import discord
 from redbot.core import Config, checks, commands
+from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, pagify
 
 log = logging.getLogger("red.reactkarma")
@@ -43,7 +44,7 @@ class ReactKarma(commands.Cog):
     Upvotes add 1 karma. Downvotes subtract 1 karma.
     """
 
-    def __init__(self, bot):
+    def __init__(self, bot: Red):
         super().__init__()
 
         self.bot = bot
