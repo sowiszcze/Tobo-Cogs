@@ -44,6 +44,8 @@ class ReactKarma(getattr(commands, "Cog", object)):
     """
 
     def __init__(self, bot):
+        super().__init__()
+        
         self.bot = bot
         self.conf = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
         self.conf.register_user(karma=0)
