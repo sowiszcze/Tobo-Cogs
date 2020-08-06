@@ -24,4 +24,4 @@ from .reactkarma import ReactKarma
 
 
 def setup(bot):
-    bot.add_cog(ReactKarma())
+    bot.add_cog(ReactKarma(bot))
