@@ -43,7 +43,8 @@ class ReactKarma(getattr(commands, "Cog", object)):
     Upvotes add 1 karma. Downvotes subtract 1 karma.
     """
 
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
         self.conf = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
         self.conf.register_user(karma=0)
         self.conf.register_guild(upvote=None, downvote=None)
@@ -201,7 +202,7 @@ class ReactKarma(getattr(commands, "Cog", object)):
     async def _check_reaction(
         self, reaction: discord.PartialEmoji, event: discord.RawReactionActionEvent, *, added: bool
     ):
-        channel = discord.get_channel(event.channel_id)
+        channel = self.bot.get_channel(event.channel_id)
         message = await channel.fetchMessage(event.message_id)
         (author, guild) = (message.author, message.guild)
         if author.id == event.user_id:
