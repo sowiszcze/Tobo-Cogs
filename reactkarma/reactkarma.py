@@ -36,7 +36,7 @@ UNIQUE_ID = 0x9C02DCC7
 MemberInfo = namedtuple("MemberInfo", "id name karma")
 
 
-class ReactKarma(getattr(commands, "Cog", object)):
+class ReactKarma(commands.Cog):
     """Keep track of karma for all users in the bot's scope.
 
     Emojis which affect karma are customised by the owner.
@@ -45,7 +45,7 @@ class ReactKarma(getattr(commands, "Cog", object)):
 
     def __init__(self, bot):
         super().__init__()
-        
+
         self.bot = bot
         self.conf = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
         self.conf.register_user(karma=0)
