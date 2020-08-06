@@ -186,7 +186,7 @@ class ReactKarma(getattr(commands, "Cog", object)):
     async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
         """Fires when the bot sees a reaction being added, and updates karma.
 
-        Ignores Private Channels and users reacting to their own message.
+        Ignores users reacting to their own message.
         """
         await self._check_reaction(reaction, user, added=True)
 
@@ -194,7 +194,7 @@ class ReactKarma(getattr(commands, "Cog", object)):
     async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
         """Fires when the bot sees a reaction being removed, and updates karma.
 
-        Ignores Private Channels and users reacting to their own message.
+        Ignores users reacting to their own message.
         """
         await self._check_reaction(reaction, user, added=False)
 
@@ -203,7 +203,7 @@ class ReactKarma(getattr(commands, "Cog", object)):
     ):
         message = reaction.message
         (author, channel, guild) = (message.author, message.channel, message.guild)
-        if author == user or isinstance(channel, discord.abc.PrivateChannel):
+        if author == user:
             return
         emoji = reaction.emoji
         upvote = await self._is_upvote(guild, emoji)
